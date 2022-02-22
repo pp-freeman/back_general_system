@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pp.auth_server.dao.IDictionDao">
+    <insert id="addDic" parameterType="com.pp.auth_server.domain.Semester">
+        INSERT INTO `education_manage`.`semester` (`semesterno`, `semestername`, `state`,id)
+        VALUES (#{semesterno}, #{semestername}, #{state},#{id});
+    </insert>
+
+    <delete id="deleteDiction" parameterType="com.pp.auth_server.domain.Semester">
+        delete from semester where  semesterno = #{semesterno} and semestername = #{semestername} and state = #{state}
+    </delete>
+
+    <select id="getUpdateDic" resultType="com.pp.auth_server.domain.Semester">
+        select * from semester where semesterno = #{semesterno} and semestername = #{semestername} and state = #{state}
+    </select>
+
+    <update id="editDiction" parameterType="com.pp.auth_server.domain.Semester">
+        UPDATE `education_manage`.`semester` SET `semesterno`=#{semesterno}, `semestername`=#{semestername}, `state`=#{state}
+        WHERE id = #{id};
+    </update>
+    <select id="getDictionByAll" resultType="com.pp.auth_server.domain.Semester">
+        select * from semester where  semesterno = #{semesterno} and semestername = #{semestername} and state = #{state}
+    </select>
+</mapper>

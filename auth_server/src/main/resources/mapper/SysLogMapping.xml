@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pp.auth_server.dao.ISysLogDao">
+    <insert id="saveLog" parameterType="com.pp.auth_server.domain.LogDO">
+        INSERT INTO `education_manage`.`sysLog` (`id`, `userId`, `name`, `operation`, `time`, `method`, `params`, `ip`,gmtCreate,result)
+         VALUES (#{id}, #{userId}, #{name}, #{operation}, #{time}, #{method}, #{params}, #{ip},#{gmtCreate},#{result});
+    </insert>
+
+    <select id="getSysLogList" resultType="com.pp.auth_server.domain.LogDO">
+        select * from sysLog
+        <where>
+            <if test="userId!=null and userId !=''">
+                and name like concat('%',#{userId},'%')
+            </if>
+            <if test="operation!=null and operation!=''">
+                and operation like concat('%',#{operation},'%')
+            </if>
+        </where>
+        order by gmtCreate desc
+        limit #{pageStart},#{pageSize}
+    </select>
+
+    <select id="getSysLogListCount" resultType="int">
+        select count(*) from sysLog
+        <where>
+            <if test="userId!=null and userId !=''">
+                and name like concat('%',#{userId},'%')
+            </if>
+            <if test="operation!=null and operation!=''">
+                and operation like concat('%',#{operation},'%')
+            </if>
+
+        </where>
+
+    </select>
+    
+    <select id="getOpSysLog" resultType="com.pp.auth_server.domain.LogDO">
+        select * from syslog where id not in(
+            select id from syslog
+            <where>
+                <if test="operation!=null and operation!=''">
+                    and operation like concat('%','登录','%')
+                </if>
+            </where>
+            )
+            <if test="userId!=null and userId !=''">
+                and name like concat('%',#{userId},'%')
+            </if>
+        order by gmtCreate desc
+        limit #{pageStart},#{pageSize}
+    </select>
+
+    <select id="getOpSysLogCount" resultType="int">
+        select count(*) from syslog where id not in(
+        select id from syslog
+        <where>
+            <if test="operation!=null and operation!=''">
+                and operation like concat('%',#{operation},'%')
+            </if>
+        </where>
+        )
+        <if test="userId!=null and userId !=''">
+            and name like concat('%',#{userId},'%')
+        </if>
+    </select>
+
+    <delete id="deleteLogById" parameterType="com.pp.auth_server.domain.LogDO">
+        delete from sysLog where id = #{id}
+    </delete>
+
+</mapper>

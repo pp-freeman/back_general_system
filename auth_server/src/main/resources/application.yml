@@ -1,0 +1,62 @@
+server:
+  port: 8001
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8067/eureka/
+spring:
+#  cloud:
+#    compatibility-verifier:
+#      enabled: false
+  application:
+    name: auth_service
+  redis:
+    database: 0
+    port: 6379
+    host: 127.0.0.1
+  datasource:
+    #    driverClassName: com.mysql.cj.jdbc.Driver
+    #    url: amRiYzpteXNxbDovL215c3FsOjMzMDYvZWR1Y2F0aW9uX21hbmFnZT9zZXJ2ZXJUaW1lem9uZT1HTVQlMkI4JnVzZVNTTD1mYWxzZQ==
+    #    username: cm9vdA==
+    #    password: cm9vdA==
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: amRiYzpteXNxbDovL2xvY2FsaG9zdDozMzA2L2VkdWNhdGlvbl9tYW5hZ2U/c2VydmVyVGltZXpvbmU9R01UJTJCOA==
+    username: cm9vdA==
+    password: NjU4MDAx
+    type: com.alibaba.druid.pool.DruidDataSource
+    #连接池的配置信息
+    ## 初始化大小，最小，最大
+    initialSize: 5
+    minIdle: 5
+    maxActive: 20
+    ## 配置获取连接等待超时的时间
+    maxWait: 60000
+    # 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒
+    timeBetweenEvictionRunsMillis: 60000
+    # 配置一个连接在池中最小生存的时间，单位是毫秒
+    minEvictableIdleTimeMillis: 300000
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxPoolPreparedStatementPerConnectionSize: 20
+    filters: stat,wall
+
+    #druid配置
+    druid:
+      web-stat-filter:
+        enabled: true
+      stat-view-servlet:
+        enabled: true
+      #url监控
+      aop-patterns: com.pp.auth_server.controller.*
+      filter:
+        wall:
+          enabled: true
+        commons-log:
+          enabled: true
+
+mybatis:
+ mapper-locations: classpath:mapper/*.xml

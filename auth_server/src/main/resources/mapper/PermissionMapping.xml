@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pp.auth_server.dao.IPermissionDao">
+    <select id="getAllPermission" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission
+    </select>
+
+    <select id="getAllPermissionChild" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission_child
+    </select>
+
+    <select id="getAllPermissionButton" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission_button
+    </select>
+
+    <insert id="addPermission">
+        insert into permission values(#{id},#{permissionname},#{url})
+    </insert>
+
+    <insert id="addPermissionChild">
+        insert into permission_child values(#{id},#{parent},#{permissionname},#{url})
+    </insert>
+
+    <insert id="addPermissionButton">
+        insert into permission_button values(#{id},#{parent},#{permissionname},#{url})
+    </insert>
+
+    <select id="getUpdatePermission" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission where id = #{id}
+    </select>
+    <select id="getUpdatePermissionChild" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission_child where id = #{id}
+    </select>
+    <select id="getUpdatePermissionButton" resultType="com.pp.auth_server.domain.Permission">
+        select * from permission_button where id = #{id}
+    </select>
+
+    <update id="editPermission">
+        update permission set permissionName=#{permissionname},url=#{url} where id=#{id}
+    </update>
+
+    <update id="editPermissionChild">
+        update permission_child set permissionName=#{permissionname},url=#{url} where id=#{id}
+    </update>
+
+    <update id="editPermissionButton">
+        update permission_button set permissionName=#{permissionname},url=#{url} where id=#{id}
+    </update>
+
+    <delete id="deletePermission">
+        delete from permission where id=#{id}
+    </delete>
+
+    <delete id="deletePermissionChild">
+        delete from permission_child where id=#{id}
+    </delete>
+
+    <delete id="deletePermissionButton">
+        delete from permission_button where id=#{id}
+    </delete>
+
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pp.auth_server.dao.IDocDao">
+    <insert id="addTextBook" parameterType="com.pp.auth_server.domain.TextBook">
+        INSERT INTO `education_manage`.`textbook` (`id`, `isbn`, `name`, `author`, `press`, `presstime`, `price`, `tstate`, `courseid`)
+        VALUES (#{id}, #{isbn}, #{name}, #{author}, #{press}, #{presstime}, #{price}, 0, #{courseid});
+    </insert>
+    <delete id="deleteTextBook">
+        delete from textbook where courseid = #{id}
+    </delete>
+    <select id="getDocumentById" resultType="com.pp.auth_server.domain.Document">
+        select * from document where courseid = #{id}
+    </select>
+    <delete id="deleteDocument">
+        delete from document where courseid = #{id}
+    </delete>
+    <insert id="addDocument" parameterType="com.pp.auth_server.domain.Document">
+        INSERT INTO `education_manage`.`document` (`id`, `path`, `courseid`, `dstate`, `uploadtime`)
+        VALUES (#{id}, #{path}, #{courseid}, 0, #{uploadtime});
+    </insert>
+    <select id="getCourserAndDoc" parameterType="String" resultType="com.pp.auth_server.domain.CourseDoc">
+        select course.*,textbook.*,document.*,tname from course left join textbook on course.coursecode = textbook.courseid
+        left join document on  course.coursecode = document.courseid LEFT JOIN teacher_info on course.tline=teacher_info.id where course.coursecode = #{id}
+    </select>
+    <select id="getTextbookList" resultType="com.pp.auth_server.domain.CourseDoc">
+        select * from course,textbook where textbook.courseid = coursecode
+        <if test="tstate!=null and tstate!=''">
+            and tstate = #{tstate}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+       order by textbook.presstime desc limit #{pageStart},#{pageSize}
+    </select>
+    <select id="getTextbookListCount" resultType="int">
+        select count(*) from course,textbook where textbook.courseid = coursecode
+        <if test="tstate!=null and tstate!=''">
+            and tstate = #{tstate}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+    </select>
+    <update id="acceptBookAudit" parameterType="String">
+        update textbook set tstate=1 where courseid = #{id}
+    </update>
+    <update id="refuseBookAudit" parameterType="String">
+        update textbook set tstate=2 where courseid = #{id}
+    </update>
+
+
+    <select id="getDocList" resultType="com.pp.auth_server.domain.CourseDoc">
+        select * from course,document where courseid = coursecode
+        <if test="dstate!=null and dstate!=''">
+            and dstate = #{dstate}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        order by document.uploadtime desc limit #{pageStart},#{pageSize}
+    </select>
+    <select id="getDocListCount" resultType="int">
+        select count(*) from course,document where courseid = coursecode
+        <if test="dstate!=null and dstate!=''">
+            and dstate = #{dstate}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+    </select>
+    <select id="getDocByCourseId" resultType="com.pp.auth_server.domain.CourseDoc">
+        select * from course,document where   courseid = coursecode and  courseid = #{id}
+    </select>
+    <update id="acceptDocAudit" parameterType="String">
+        update document set dstate=1,refuseresult=null where courseid = #{id}
+    </update>
+    <update id="refuseDocAudit" parameterType="String">
+        update document set dstate=2,refuseresult=#{refuseresult} where courseid = #{id}
+    </update>
+
+    <insert id="addAdjustClass" parameterType="com.pp.auth_server.domain.AdjustClass">
+        INSERT INTO `education_manage`.`adjustClass` (`id`, `type`, `aresult`, `adesc`, `aweeknum`, `atimeflag`, `aspotflag`, `astate`, `createtime`, `acourseid`)
+        VALUES (#{id}, #{type}, #{aresult}, #{adesc}, #{aweeknum}, #{atimeflag}, #{aspotflag}, 0, #{createtime}, #{acourseid});
+    </insert>
+    <delete id="deleteAdjustClass">
+        delete from adjustClass where acourseid = #{coursecode}
+    </delete>
+    <select id="getAdjustClassList" resultType="com.pp.auth_server.domain.AdjustClassAndCourse">
+        select * from course,adjustClass where adjustClass.acourseid = coursecode
+        <if test="id!=null and id!=''">
+            and tline = #{id}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="astate!=null and astate!=''">
+            and astate = #{astate}
+        </if>
+        order by adjustClass.createtime desc limit #{pageStart},#{pageSize}
+    </select>
+    <select id="getAdjustClassListCount" resultType="int">
+        select count(*) from course,adjustClass where adjustClass.acourseid = coursecode
+        <if test="id!=null and id!=''">
+            and tline = #{id}
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="astate!=null and astate!=''">
+            and astate = #{astate}
+        </if>
+    </select>
+    <select id="getAdjustById" resultType="com.pp.auth_server.domain.AdjustClassAndCourse">
+        select  * from course,adjustClass where adjustClass.acourseid = coursecode and acourseid = #{id}
+    </select>
+    <update id="acceptAdjust">
+        update adjustClass set astate = 1,refuseresult= null where acourseid = #{id}
+    </update>
+    <update id="refuseAdjust">
+        update adjustClass set astate = 2,refuseresult=#{refuseresult} where acourseid = #{id}
+    </update>
+</mapper>

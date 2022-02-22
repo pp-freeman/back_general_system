@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pp.auth_server.dao.ICourseDao">
+    <select id="getAllGradeYear" resultType="String">
+        select distinct sgrade from student_info ORDER by sgrade desc
+    </select>
+    <select id="getAllAcademy" resultType="String">
+        select distinct sacademy from student_info
+    </select>
+    <select id="getAllSemester" resultType="com.pp.auth_server.domain.Semester">
+        select * from semester where state=#{state} ORDER BY semesterno desc
+    </select>
+    <select id="getAllDiction" resultType="com.pp.auth_server.domain.Semester">
+        select * from semester
+        <where>
+            <if test="dictionType!=null and dictionType!=''">
+                and state = #{dictionType}
+            </if>
+        </where>
+        order by semesterno desc
+    </select>
+    <select id="getAllDictionType" resultType="String">
+        select state from semester group by state
+    </select>
+    <select id="getAllClass" resultType="String">
+        select DISTINCT sclass from student_info order by sclass
+    </select>
+    <insert id="addCourse" parameterType="com.pp.auth_server.domain.Course">
+        insert into course(coursecode,coursename,coursetype,begingrade,beginacademy,semester,execourses,tline,timeflag,spotflag,attendexpect,creadit,period,weeknum,atusum)
+        values (#{coursecode},#{coursename},#{coursetype},#{begingrade},#{beginacademy},#{semester},#{execourses},#{tline},#{timeflag},#{spotflag},#{attendexpect},#{creadit},#{period},#{weeknum},#{atusum})
+    </insert>
+
+    <select id="getClassCount" resultType="int">
+        select count(*) from student_info where  sacademy = #{beginacademy} and sgrade=#{begingrade} and sclass in
+        <foreach collection="idList" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="getCourseList" resultType="com.pp.auth_server.domain.Course">
+        select * from Course
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and coursename like concat('%',#{coursename},'%')
+            </if>
+            <if test="semester!=null and semester!=''">
+                and semester = #{semester}
+            </if>
+            <if test="coursetype!=null and coursetype!=''">
+                and coursetype = #{coursetype}
+            </if>
+            <if test="beginacademy!=null and beginacademy!=''">
+                and beginacademy = #{beginacademy}
+            </if>
+            <if test="begingrade!=null and begingrade!=''">
+                and begingrade = #{begingrade}
+            </if>
+        </where>
+        limit #{pageStart},#{pageSize}
+    </select>
+
+
+
+    <select id="getCourseCount" resultType="int">
+        select count(*) from Course
+        <where>
+            <if test="coursename!=null and coursename!=''">
+                and coursename like concat('%',#{coursename},'%')
+            </if>
+            <if test="coursetype!=null and coursetype!=''">
+                and coursetype = #{coursetype}
+            </if>
+            <if test="semester!=null and semester!=''">
+                and semester = #{semester}
+            </if>
+            <if test="beginacademy!=null and beginacademy!=''">
+                and beginacademy = #{beginacademy}
+            </if>
+            <if test="begingrade!=null and begingrade!=''">
+                and begingrade = #{begingrade}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addSc">
+        insert into sc(sno,coursecode) values(#{sno},#{courescode})
+    </insert>
+
+    <select id="getStudentByClassList" resultType="com.pp.auth_server.domain.StudentInfo">
+        select * from student_info where  sacademy = #{beginacademy} and sgrade=#{begingrade} and sclass in
+        <foreach collection="ClassList" item="class" open="(" close=")" separator=",">
+            #{class}
+        </foreach>
+    </select>
+
+    <insert id="studentSc">
+        insert into sc(sno,coursecode) values(#{id},#{coursecode})
+    </insert>
+
+    <update id="addSummary">
+        update course set summary = #{summary} where coursecode = #{coursecode}
+    </update>
+
+    <update id="addScCourseNum">
+        update course set atusum = atusum+1 where coursecode=#{coursecode}
+    </update>
+
+    <update id="subScCourseNum">
+        update course set atusum = atusum-1 where coursecode=#{coursecode}
+    </update>
+
+    <select id="getScCourseList" resultType="com.pp.auth_server.domain.Course">
+        select Course.* from Course,sc where Course.coursecode=sc.coursecode
+        and sc.sno = #{id}
+        <if test="coursename!=null and coursename!=''">
+            and coursename like concat('%',#{coursename},'%')
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="coursetype!=null and coursetype!=''">
+            and coursetype = #{coursetype}
+        </if>
+        limit #{pageStart},#{pageSize}
+    </select>
+
+    <select id="getScCourseCount" resultType="int">
+        select count(*) from Course,sc where Course.coursecode=sc.coursecode
+        and sc.sno = #{id}
+        <if test="coursename!=null and coursename!=''">
+            and coursename like concat('%',#{coursename},'%')
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="coursetype!=null and coursetype!=''">
+            and coursetype = #{coursetype}
+        </if>
+    </select>
+
+    <delete id="dropCourse">
+        delete from sc where sno = #{id} and coursecode=#{coursecode}
+    </delete>
+
+    <delete id="dropCourseByCourseCode">
+        delete from sc where coursecode=#{coursecode}
+    </delete>
+
+    <select id="getCourseById" resultType="com.pp.auth_server.domain.Course">
+        select * from course where coursecode = #{id}
+    </select>
+
+    <update id="editCourse" parameterType="com.pp.auth_server.domain.Course">
+        update course set  `coursename`=#{coursename}, `coursetype`=#{coursetype},
+        `begingrade`=#{begingrade}, `beginacademy`=#{beginacademy}, `semester`=#{semester}, `execourses`=#{execourses},
+        `tline`=#{tline}, `timeflag`=#{timeflag}, `spotflag`=#{spotflag}, `attendexpect`=#{attendexpect},
+        `atusum`=#{atusum}, `creadit`=#{creadit}, `period`=#{period}, `weeknum`=#{weeknum} WHERE (`coursecode`=#{coursecode});
+    </update>
+
+    <update id="editProportion">
+        update course set proportion = #{proportion} where (`coursecode`=#{coursecode});
+    </update>
+
+    <delete id="deleteCourse">
+        delete from course where coursecode = #{id}
+    </delete>
+
+    <select id="getTeacherCourseList" resultType="com.pp.auth_server.domain.Course">
+        select * from Course where tline = #{id}
+        <if test="coursename!=null and coursename!=''">
+            and coursename like concat('%',#{coursename},'%')
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="coursetype!=null and coursetype!=''">
+            and coursetype = #{coursetype}
+        </if>
+        order by coursetype limit #{pageStart},#{pageSize}
+    </select>
+
+    <select id="getTeacherCourseListCount" resultType="int">
+        select count(*) from Course where tline = #{id}
+        <if test="coursename!=null and coursename!=''">
+            and coursename like concat('%',#{coursename},'%')
+        </if>
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+        <if test="coursetype!=null and coursetype!=''">
+            and coursetype = #{coursetype}
+        </if>
+    </select>
+    <select id="getClassCourseList" resultType="com.pp.auth_server.domain.Course">
+        select * from Course where beginacademy = #{academy} and begingrade = #{grade} and execourses like concat('%',#{exeCourse},'%') and semester = #{semester}
+    </select>
+
+    <select id="getCourseStudentList" resultType="com.pp.auth_server.domain.Grade">
+        select student_info.*,course.*,usualgrade,papergrade,totalgrade from sc,student_info,course
+        where sc.sno = student_info.id and sc.coursecode = course.coursecode and sc.coursecode = #{coursecode}
+        <if test="execourse!=null and execourse!=''">
+            and sclass = #{execourse}
+        </if>
+        order by student_info.sclass
+    </select>
+
+    <select id="getWeekCourseList" resultType="com.pp.auth_server.domain.AdjustClassAndCourse">
+        select course.*,adjustClass.* from course left join adjustClass on course.coursecode = acourseid
+        left join sc on sc.coursecode  = course.coursecode  where sc.sno = #{id}
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+    </select>
+
+    <select id="getWeekTeacherCourseList" resultType="com.pp.auth_server.domain.AdjustClassAndCourse">
+        select course.*,adjustClass.* from course left join adjustClass on course.coursecode = acourseid where tline= #{id}
+        <if test="semester!=null and semester!=''">
+            and semester = #{semester}
+        </if>
+    </select>
+    <select id="getCourseByName" resultType="com.pp.auth_server.domain.Course">
+        select * from course where coursename = #{coursename};
+    </select>
+    <select id="getClassRoomCourse" resultType="com.pp.auth_server.domain.Course">
+        select * from course where spotflag = #{spotflag} and semester = #{semester}
+    </select>
+    <select id="getCourseByTeacher" resultType="com.pp.auth_server.domain.Course">
+        select * from course where tline = #{tline} and semester = #{semester}
+    </select>
+
+    <select id="getSummary" resultType="String">
+        select summary from course where coursecode = #{coursecode}
+    </select>
+
+</mapper>
