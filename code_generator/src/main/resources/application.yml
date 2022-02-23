@@ -1,0 +1,18 @@
+server:
+  port: 8002
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8067/eureka/
+#Datasource
+spring:
+  application:
+    name: code_generator
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/student_manage?autoReconnect=true&useAffectedRows=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 658001
+    driver-class-name: com.mysql.jdbc.Driver
+
