@@ -1,0 +1,13 @@
+server:
+  port: 8067 #ָ�����ж˿�
+spring:
+  application:
+    name: eureka-server #ָ����������
+eureka:
+  instance:
+    hostname: localhost #ָ��������ַ
+  client:
+    fetch-registry: false #ָ���Ƿ�Ҫ��ע�����Ļ�ȡ����ע�����Ĳ���Ҫ������
+    register-with-eureka: false #ָ���Ƿ�Ҫע�ᵽע�����ģ�ע�����Ĳ���Ҫ������
+  server:
+    enable-self-preservation: false #�رձ���ģʽ
