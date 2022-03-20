@@ -1,33 +1,95 @@
 package com.pp.code_generator.generator;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pp.code_generator.common.CommonResult;
+import com.pp.code_generator.utils.RedisUtil;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.io.*;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/code")
 public class GeneratorController {
 
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    RedisUtil redisUtil;
+
+    @Value("${spring.datasource.driver-class-name}")
+    private String driver;
+
+    @Value(value = "${spring.datasource.url}")
+    private String url;
+
+    @Value(value = "${spring.datasource.username}")
+    private String userName;
+
+    @Value(value = "${spring.datasource.password}")
+    private String password;
+
+
+    @GetMapping(value = "/addField")
+    public CommonResult<String> addFile(@RequestParam String json) {
+        String result = "";
+        if (redisUtil.get("addFiledString") != null) {
+            String oldJson = redisUtil.get("addFiledString").toString();
+            List<EntityField> list = JSON.parseArray(oldJson, EntityField.class);
+            EntityField entityField = JSON.parseObject(json, EntityField.class);
+            list.add(entityField);
+            result = JSON.toJSONString(list);
+            redisUtil.set("addFiledString", result);
+            redisUtil.expire("addFiledString", 2*60);
+        } else {
+            EntityField entityField = JSON.parseObject(json, EntityField.class);
+            List<EntityField> list = new ArrayList<>();
+            list.add(entityField);
+            result = JSON.toJSONString(list);
+            redisUtil.set("addFiledString", result);
+        }
+        return new CommonResult<>(result);
+    }
+
+    @GetMapping(value = "/getFieldList")
+    public CommonResult<List<EntityField>> getFieldList() {
+        String result = "";
+        if (redisUtil.get("addFiledString") != null) {
+            result = redisUtil.get("addFiledString").toString();
+        } else {
+            return new CommonResult<>();
+        }
+        List<EntityField> entityFields = JSON.parseArray(result, EntityField.class);
+        return new CommonResult<>(entityFields);
+    }
+
+    @GetMapping(value = "/delFieldList")
+    public CommonResult<String> delFieldList() {
+        if (redisUtil.get("addFiledString") != null) {
+            redisUtil.del("addFiledString");
+        }
+        return new CommonResult<>("success");
+    }
+
+
     @PostMapping(value = "/generate-code")
-    public String generator(@Valid @RequestBody FormEntity formEntity) throws JsonProcessingException {
+    public CommonResult<String> generator(@Valid @RequestBody FormEntity formEntity) throws JsonProcessingException, ClassNotFoundException {
 
         Iterator<EntityField> iterator = formEntity.getEntityFields().iterator();
         while (iterator.hasNext()) {
@@ -107,7 +169,60 @@ public class GeneratorController {
         generatorCode(sqlResultPath, sqlTemplatePath, config, map);
 
         formEntity.setInitFlag(0);
-        return "success";
+
+
+        Connection conn = null;
+        try {
+            //读取sql语句
+            StringBuilder buffer1 = new StringBuilder();
+            StringBuilder buffer = new StringBuilder();
+            InputStream is = new FileInputStream("C:\\Users\\pengpan\\IdeaProjects\\back_general_system\\code_generator\\src\\main\\resources\\sqlsql\\sql.sql");
+            String line; // 用来保存每行读取的内容
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            line = reader.readLine(); // 读取第一行
+            boolean flag = false;
+            while (line != null) { // 如果 line 为空说明读完了
+                if (!flag) {
+                    buffer1.append(line); // 将读到的内容添加到 buffer 中
+                    buffer1.append("\n"); // 添加换行符
+                    flag = true;
+                } else {
+                    buffer.append(line); // 将读到的内容添加到 buffer 中
+                    buffer.append("\n"); // 添加换行符
+                }
+                line = reader.readLine(); // 读取下一行
+            }
+            reader.close();
+            is.close();
+            System.out.println(buffer.toString());
+            System.out.println(buffer1.toString());
+            //创建数据库表
+            Class.forName(driver);
+            //测试url中是否包含useSSL字段，没有则添加设该字段且禁用
+            if( url.indexOf("?") == -1 ){
+                url = url + "?useSSL=false" ;
+            }
+            else if( url.indexOf("useSSL=false") == -1 || url.indexOf("useSSL=true") == -1 )
+            {
+                url = url + "&useSSL=false";
+            }
+
+            conn = DriverManager.getConnection(url, userName, password);
+
+            Statement stat = conn.createStatement();
+            // 事务
+            conn.setAutoCommit( false ); // 更改JDBC事务的默认提交方式
+            stat.executeUpdate(buffer1.toString());
+            stat.executeUpdate(buffer.toString());
+            conn.commit(); //提交JDBC事务
+            conn.setAutoCommit( true ); // 恢复JDBC事务的默认提交方式
+            // 释放资源
+            stat.close();
+            conn.close();
+        } catch (Exception e) {
+            return new CommonResult<>("数据表创建失败!", 500);
+        }
+        return new CommonResult<>("success");
     }
 
     // ----------------------------------------------

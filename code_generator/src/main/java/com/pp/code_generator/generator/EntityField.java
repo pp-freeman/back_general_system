@@ -21,7 +21,7 @@ public class EntityField implements Serializable {
     private String dbType;
 
     @NotBlank
-    private String auto = "of";
+    private String auto = "off";
 
     private String notNull = "off";
 

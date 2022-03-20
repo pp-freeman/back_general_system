@@ -11,7 +11,7 @@ spring:
 #    compatibility-verifier:
 #      enabled: false
   application:
-    name: auth_service
+    name: auth-service
   redis:
     database: 0
     port: 6379
@@ -60,3 +60,11 @@ spring:
 
 mybatis:
  mapper-locations: classpath:mapper/*.xml
+
+service-url:
+  code_generator: http://code-generator
+
+logging:
+  file:
+    name: D:/logs/lab.log
+    max-size: 500KB

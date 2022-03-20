@@ -53,7 +53,7 @@ public class ${entityName?cap_first}ServiceImpl implements ${entityName?cap_firs
         // insert DB
         ${entityName?uncap_first}Mapper.insert(${entityName?uncap_first});
 
-        return user;
+        return ${entityName?uncap_first};
     }
 
     @Override

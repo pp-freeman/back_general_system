@@ -36,11 +36,9 @@ public class WebLogAspect {
         HttpServletRequest request = attributes.getRequest();
 
         //记录下请求内容
-        logger.info("请求地址:"+request.getRequestURI().toString());
-        logger.info("HTTP Method:"+request.getMethod());
-        //获取真实的请求地址
-        logger.info("CLASS_METHOD:"+joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName());
-        logger.info("参数:"+ Arrays.toString(joinPoint.getArgs()));
+        logger.info("请求地址:"+request.getRequestURI().toString() + "\n" + "HTTP Method:"+request.getMethod() + "\n" +
+                "CLASS_METHOD:"+joinPoint.getSignature().getDeclaringTypeName()+"."+joinPoint.getSignature().getName() + "\n" +
+                "参数:"+ Arrays.toString(joinPoint.getArgs()));
     }
 
     @AfterReturning(returning = "ret",pointcut = "logPointCut()")
