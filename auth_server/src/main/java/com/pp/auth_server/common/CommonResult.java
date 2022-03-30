@@ -4,6 +4,7 @@ public class CommonResult<T> {
     private T data;
     private String message;
     private Integer code;
+    private Integer number;
 
     public CommonResult() {
     }
@@ -12,6 +13,20 @@ public class CommonResult<T> {
         this.data = data;
         this.message = message;
         this.code = code;
+    }
+
+    public CommonResult(T data, String message, Integer code, Integer number) {
+        this.data = data;
+        this.message = message;
+        this.code = code;
+        this.number = number;
+    }
+
+    public CommonResult(T data, Integer number) {
+        this.data = data;
+        this.message = "操作成功";
+        this.code = 200;
+        this.number = number;
     }
 
     public CommonResult(String message, Integer code) {
@@ -40,6 +55,14 @@ public class CommonResult<T> {
 
     public Integer getCode() {
         return code;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Integer getNumber() {
+        return number;
     }
 
     public void setCode(Integer code) {

@@ -6,6 +6,7 @@ import com.pp.auth_server.domain.PermissionChild;
 import com.pp.auth_server.domain.Role;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IRoleService {
     //只得到权限列表，不包含子权限
@@ -45,4 +46,6 @@ public interface IRoleService {
     public String getRoleByUserId(String id);
     //通过用户的所有permissionchild
     public List<PermissionChild> getPermissionChildByUserId(String id);
+    //所有角色下对应的用户
+    public Map<String, Object> getAllRoleAndUser();
 }

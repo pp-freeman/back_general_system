@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans   http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+        <property name="driverClassName" value="com.mysql.cj.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://127.0.0.1:3306/workflow?autoReconnect=true&amp;useAffectedRows=true&amp;characterEncoding=UTF-8&amp;allowMultiQueries=true&amp;useSSL=false&amp;nullCatalogMeansCurrent=true"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="658001"></property>
+        <property name="maxActive" value="3"></property>
+        <property name="maxIdle" value="1"></property>
+    </bean>
+
+    <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+
+<!--        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/db_activiti" />-->
+<!--        <property name="jdbcDriver" value="com.mysql.jdbc.Driver" />-->
+<!--        <property name="jdbcUsername" value="root" />-->
+<!--        <property name="jdbcPassword" value="123456" />-->
+        <property name="dataSource" ref="dataSource"></property>
+        <property name="databaseSchemaUpdate" value="true" />
+
+    </bean>
+
+</beans>

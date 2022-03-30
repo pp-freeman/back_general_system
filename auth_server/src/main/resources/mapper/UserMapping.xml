@@ -9,6 +9,10 @@
         username =#{username} and password = #{password}
     </select>
 
+    <select id="getUserList" resultType="com.pp.auth_server.domain.User">
+        select * from user
+    </select>
+
 
     <select id="getUserByName" resultType="com.pp.auth_server.domain.User">
         select * from user where username =#{username}

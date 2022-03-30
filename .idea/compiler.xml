@@ -7,10 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="code_generator" />
         <module name="eureka-server" />
         <module name="back_general_common" />
+        <module name="workflow" />
         <module name="auth_server" />
-        <module name="code_generator" />
       </profile>
     </annotationProcessing>
   </component>
@@ -19,6 +20,7 @@
       <module name="auth_server" options="-parameters" />
       <module name="code_generator" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
+      <module name="workflow" options="-parameters" />
     </option>
   </component>
 </project>

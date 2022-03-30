@@ -6,6 +6,7 @@ import com.pp.auth_server.domain.SysToken;
 import com.pp.auth_server.domain.User;
 import com.pp.auth_server.service.IMenuService;
 import com.pp.auth_server.service.impl.ShiroService;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -14,6 +15,7 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Component

@@ -170,4 +170,8 @@
         user_role.roleId = role.id and role.id = role_permission.roleId and permission_child.id = role_permission.permissionId
         and `user`.id = #{id}
     </select>
+
+    <select id="getAllRoleAndUser" resultType="com.pp.auth_server.domain.RoleUser">
+        select `user`.id userId,role.roleName from user,role,user_role where user.id = user_role.userId and user_role.roleId = role.id;
+    </select>
 </mapper>

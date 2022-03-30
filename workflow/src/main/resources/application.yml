@@ -1,0 +1,31 @@
+server:
+  port: 8003
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8067/eureka/
+spring:
+  application:
+    name: workflow
+  redis:
+    database: 0
+    port: 6379
+    host: 127.0.0.1
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/workflow?autoReconnect=true&useAffectedRows=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 658001
+    driver-class-name: com.mysql.jdbc.Driver
+  resources:
+    static-locations: classpath:/bpmn
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+
+
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+

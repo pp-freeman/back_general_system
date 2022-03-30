@@ -48,6 +48,7 @@ public class ShiroConfig {
         filterMap.put("/test", "anon");
         filterMap.put("/home/login", "anon");
         filterMap.put("/home/verifyCode", "anon");
+        filterMap.put("/doc/uploadWorkFlowFile", "anon");
         filterMap.put("/swagger/**", "anon");
         filterMap.put("/menus/**", "anon");
         filterMap.put("/v2/api-docs", "anon");

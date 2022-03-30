@@ -63,6 +63,7 @@ mybatis:
 
 service-url:
   code_generator: http://code-generator
+  workflow: http://workflow
 
 logging:
   file:

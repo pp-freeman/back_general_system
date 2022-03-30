@@ -25,5 +25,6 @@ public interface IUserDao {
     public User getUpdateUser(String id);
     public int editUser(User user);
 
+    public List<User> getUserList();
 
 }

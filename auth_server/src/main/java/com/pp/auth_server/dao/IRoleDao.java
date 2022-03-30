@@ -1,12 +1,10 @@
 package com.pp.auth_server.dao;
 
-import com.pp.auth_server.domain.Permission;
-import com.pp.auth_server.domain.PermissionButton;
-import com.pp.auth_server.domain.PermissionChild;
-import com.pp.auth_server.domain.Role;
+import com.pp.auth_server.domain.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface IRoleDao {
@@ -47,4 +45,6 @@ public interface IRoleDao {
     public String getRoleByUserId(String id);
     //通过用户的所有permissionchild
     public List<PermissionChild> getPermissionChildByUserId(String id);
+    //所有角色下对应的用户
+    public List<RoleUser> getAllRoleAndUser();
 }

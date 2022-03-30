@@ -1,22 +1,26 @@
 package com.pp.auth_server.service.impl;
 
 import com.pp.auth_server.dao.IRoleDao;
-import com.pp.auth_server.domain.Permission;
-import com.pp.auth_server.domain.PermissionButton;
-import com.pp.auth_server.domain.PermissionChild;
-import com.pp.auth_server.domain.Role;
+import com.pp.auth_server.dao.IUserDao;
+import com.pp.auth_server.domain.*;
 import com.pp.auth_server.service.IRoleService;
 import com.pp.auth_server.utils.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 public class RoleService implements IRoleService {
 
     @Autowired
     IRoleDao roleDao;
+
+    @Autowired
+    IUserDao userDao;
 
     @Autowired
     RedisUtil redisUtil;
@@ -111,5 +115,31 @@ public class RoleService implements IRoleService {
     //通过用户的所有permissionchild
     public List<PermissionChild> getPermissionChildByUserId(String id){
         return roleDao.getPermissionChildByUserId(id);
+    }
+
+    //所有角色下对应的用户
+    public Map<String, Object> getAllRoleAndUser(){
+        List<RoleUser> list = roleDao.getAllRoleAndUser();
+        List<User> userList = userDao.getUserList();
+        Map<String,Object> map = new HashMap<>();
+        for (RoleUser roleUser : list) {
+            if (map.containsKey(roleUser.getRoleName())) {
+                String users = (String) map.get(roleUser.getRoleName());
+                users = users + "," + roleUser.getUserId();
+                map.replace(roleUser.getRoleName(), users);
+            } else {
+                map.put(roleUser.getRoleName(), roleUser.getUserId());
+            }
+        }
+        String users = "";
+        for (User user : userList) {
+            if ("".equals(users)) {
+                users = user.getId();
+            } else {
+                users = users + "," + user.getId();
+            }
+        }
+        map.put("users", users);
+        return map;
     }
 }
